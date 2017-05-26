@@ -3,6 +3,7 @@ import numpy as np
 import pickle
 import matplotlib.pyplot as plt
 from Data_Objects import *
+from EyeTracker_Events import *
 
 class Parser(ParserInterface):
     def __init__(self):
@@ -14,10 +15,8 @@ class Parser(ParserInterface):
         self.trialNum = 0
         self.allTrials = []
 
-    def parse(self, file_path, header = 115):
+    def parse(self, file_path):
         self.file = open(file_path, 'r')
-        for i in range(header): #skip header lines. TODO use a more sophisticated way to skip header
-            self.file.readline()
         while 1: # read all trials from file
             if not self.__getToNextTrial(): # move the file cursor to the beginning of the data of the next trial, return false when reach flag_RunEnd.
                 break
@@ -41,13 +40,18 @@ class Parser(ParserInterface):
 
     def __getToNextTrial(self):
         '''Moves the file cursor to the next MSG line, and stops if it reaches a TrialStart flag with a Probe Task'''
+        event = ""
         while 1:
             line = self.file.readline()
             if line.startswith("MSG"):
-                trialStatus, trialNum, trialTime, trialTask= self.__parseMsg(line)
-                if trialStatus == "TrialStart" and (trialTask == "Probe" or trialTask == "BDM"):
+                msg = self.__parseMsg(line)
+                if msg != None:
+                    event = msg[0]
+                else:
+                    continue
+                if event == Event.TrialStart.name:
                     return True
-                if trialStatus == "RunEnd":
+                if event == Event.RunEnd.name:
                     return False
             if not line[0].isdigit():
                 self.__updateState(line)
@@ -59,9 +63,16 @@ class Parser(ParserInterface):
         while 1:
             line = self.file.readline()
             if line.startswith("MSG"):
-                trialStatus, trialNum, trialTime, trialTask = self.__parseMsg(line)
-                if trialStatus == "Response" or trialStatus == "RespondFaster":
+                msg = self.__parseMsg(line)
+                if msg == None:
+                    print("Bad message line: " + line)
+                    return False
+                event = msg[0]
+                if event in Event.__members__: # break at next Event
                     break
+                else:
+                    print("Unrecognized Event:" + event)
+                    return False
             if not line[0].isdigit():
                 self.__updateState(line)
                 continue
@@ -70,10 +81,13 @@ class Parser(ParserInterface):
                 trialData.append([float(data[0]), float(data[1]), float(data[2])])
         trial = np.asarray(trialData)
         self.allTrials.append(trial)
+        return True
 
     def __updateState(self, line):
         '''Update the current state of the eye tracking. Either FIX, SACC or BLINK'''
         data = line.split()
+        if len(data) == 0:
+            return False
         if data[0] in self.startState:
             self.currentState = data[0][1:]
             return True
@@ -85,16 +99,23 @@ class Parser(ParserInterface):
 
     def __parseMsg(self, msg):
         '''Parse a MSG string sent by the experimenters to the eyetracker and extract relevant data'''
+        if not msg.startswith("MSG"):
+            return None
         data = msg.split()
+        if len(data)< 3 or (not data[2].startswith("flag")):
+            return None
         flagData = data[2].split('_')
-        trialStatus = flagData[1]
+        if not len(flagData) == 6:
+            return None
+        event = flagData[1]
+        task = flagData[2][4:]
+        run = int(flagData[3][3:])
         trialNum = int(flagData[4][5:])
-        trialTime = float(flagData[5][4:])
-        trialTask = flagData[2][4:]
-        return (trialStatus, trialNum, trialTime, trialTask)
+        time = float(flagData[5][4:])
+        return (event, task, run, trialNum, time)
 
 p = Parser() #initiate the parser object
-p.parse("C:\\Users\\Roee\\Desktop\\edf\\c.asc", header=84) # call parse on the current file (represents 42 trials of one subject.
+p.parse("C:\\Users\\Roee\\Desktop\\edf\\b.asc") # call parse on the current file (represents 42 trials of one subject.
 background = np.zeros([1920, 1080], dtype=int) # initiate background array (white)
 s1 = Subject("MOSHE", "./all_trials.pkl") # get subject data from the parsed file
 trial1 = s1.trials[0] # get the first trial from the subject trial array

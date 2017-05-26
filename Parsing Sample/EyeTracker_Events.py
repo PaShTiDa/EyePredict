@@ -12,6 +12,7 @@ class Event(Enum):
     ResponseIsOld = "ResponseIsOld"
     PresentIsGo = "PresentIsGo"
     ResponseIsGo = "ResponseIsGo"
+    ScaleStart = "ScaleStart"
 
 class Task(Enum):
     BDM = "BDM"
