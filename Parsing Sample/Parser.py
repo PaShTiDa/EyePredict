@@ -45,7 +45,7 @@ class Parser(ParserInterface):
             line = self.file.readline()
             if line.startswith("MSG"):
                 trialStatus, trialNum, trialTime, trialTask= self.__parseMsg(line)
-                if trialStatus == "TrialStart" and trialTask == "Probe":
+                if trialStatus == "TrialStart" and (trialTask == "Probe" or trialTask == "BDM"):
                     return True
                 if trialStatus == "RunEnd":
                     return False
@@ -94,7 +94,7 @@ class Parser(ParserInterface):
         return (trialStatus, trialNum, trialTime, trialTask)
 
 p = Parser() #initiate the parser object
-p.parse("./sample_eyetracking_data.asc") # call parse on the current file (represents 42 trials of one subject.
+p.parse("C:\\Users\\Roee\\Desktop\\edf\\c.asc", header=84) # call parse on the current file (represents 42 trials of one subject.
 background = np.zeros([1920, 1080], dtype=int) # initiate background array (white)
 s1 = Subject("MOSHE", "./all_trials.pkl") # get subject data from the parsed file
 trial1 = s1.trials[0] # get the first trial from the subject trial array
