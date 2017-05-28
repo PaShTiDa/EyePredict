@@ -1,0 +1,6 @@
+<RCC>
+  <qresource prefix="newPrefix">
+    <file>סמל.png</file>
+    <file>לוגו.jpg</file>
+  </qresource>
+</RCC>
