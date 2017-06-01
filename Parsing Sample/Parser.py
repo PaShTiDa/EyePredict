@@ -15,9 +15,11 @@ class Parser(ParserInterface):
         self.statesDict = {}
         self.trialNum = 0
         self.allTrials = []
+        self.screenResolution = () # a tuple of (xmin, ymin. xmax, ymax)
 
     def parse(self, file_path):
         self.file = open(file_path, 'r')
+        self.__readScreenResolution()
         while 1: # read all trials from file
             if not self.__getToNextTrial(): # move the file cursor to the beginning of the data of the next trial, return false when reach flag_RunEnd.
                 break
@@ -38,6 +40,17 @@ class Parser(ParserInterface):
                 self.__updateState(line)
                 continue
 
+    def __readScreenResolution(self):
+        while 1:
+            line = self.file.readline()
+            data = line.split()
+            if len(data) != 7:
+                continue
+            elif data[0] == "MSG" and data[2] == "GAZE_COORDS":
+                self.screenResolution = (0, 0, float(data[5]) + 1, float(data[6]) + 1)
+                break
+            else:
+                continue
 
     def __getToNextTrial(self):
         '''Moves the file cursor to the next MSG line, and stops if it reaches a TrialStart flag with a Probe Task'''
@@ -81,8 +94,7 @@ class Parser(ParserInterface):
                 continue
             if self.currentState != "BLINK":
                 data = line.split()
-                # TODO: Add a function to read screen res from the eyetracker file and use it as constant.
-                trialData.append([float(data[0]), float(data[1]), 1080-float(data[2])]) # 1080 is the X axis screen res
+                trialData.append([float(data[0]), float(data[1]), self.screenResolution[3] - float(data[2])]) # screenResolution[3] = ymax
         trial = np.asarray(trialData)
         self.allTrials.append(trial)
         return True
