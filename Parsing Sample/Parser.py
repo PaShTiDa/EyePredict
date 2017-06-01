@@ -2,6 +2,7 @@ from IParser import ParserInterface
 import numpy as np
 import pickle
 import matplotlib.pyplot as plt
+from skimage import io
 from Data_Objects import *
 from EyeTracker_Events import *
 
@@ -20,7 +21,7 @@ class Parser(ParserInterface):
         while 1: # read all trials from file
             if not self.__getToNextTrial(): # move the file cursor to the beginning of the data of the next trial, return false when reach flag_RunEnd.
                 break
-            self.__extractTrial() #extract current trial and save the relevant data as npy file.
+            self.__extractTrial() #extract current trial
         with open("./all_trials.pkl", 'wb') as file:
             pickle.dump(self.allTrials, file, pickle.HIGHEST_PROTOCOL) # save the numpy arrays in order using the pickle module.
         print("Successfully read " + str(self.trialNum) + " trials")
@@ -57,7 +58,7 @@ class Parser(ParserInterface):
                 self.__updateState(line)
 
     def __extractTrial(self):
-        '''Reads file data from the current row until the next MSG with a RESPONSE flag'''
+        '''Reads file data from the current row until the next MSG with an event flag'''
         trialData = []
         self.trialNum += 1
         while 1:
@@ -68,6 +69,8 @@ class Parser(ParserInterface):
                     print("Bad message line: " + line)
                     return False
                 event = msg[0]
+                #if str(event) == "ScaleStart": # uncomment to get all trial data, including the subjects gaze on the scale.
+                #   continue
                 if event in Event.__members__: # break at next Event
                     break
                 else:
@@ -78,7 +81,8 @@ class Parser(ParserInterface):
                 continue
             if self.currentState != "BLINK":
                 data = line.split()
-                trialData.append([float(data[0]), float(data[1]), float(data[2])])
+                # TODO: Add a function to read screen res from the eyetracker file and use it as constant.
+                trialData.append([float(data[0]), float(data[1]), 1080-float(data[2])]) # 1080 is the X axis screen res
         trial = np.asarray(trialData)
         self.allTrials.append(trial)
         return True
@@ -115,22 +119,23 @@ class Parser(ParserInterface):
         return (event, task, run, trialNum, time)
 
 p = Parser() #initiate the parser object
-p.parse("C:\\Users\\Roee\\Desktop\\edf\\b.asc") # call parse on the current file (represents 42 trials of one subject.
-background = np.zeros([1920, 1080], dtype=int) # initiate background array (white)
-s1 = Subject("MOSHE", "./all_trials.pkl") # get subject data from the parsed file
-trial1 = s1.trials[0] # get the first trial from the subject trial array
+p.parse("./test.asc") # call parse on the current asc file
+s1 = Subject("Test", "./all_trials.pkl") # get subject data from the parsed file
+trial1 = s1.trials[2] # get the third trial, which is the Stav Shafir example trial
 arr = trial1.data # get the actuall data for this trial
-
-plt.xlim([0, 1920])
-plt.ylim([0, 1080])
+plt.xlim([0, 1920]) # set X axis limits
+plt.ylim([0, 1080]) # set Y axis limits
 minx = min(arr[:, 1])
 maxx = max(arr[:, 1])
 miny = min(arr[:, 2])
 maxy = max(arr[:, 2])
-heatmap, xedges, yedges = np.histogram2d(arr[:,1], arr[:,2], bins = [int((maxx-minx)/5), int((maxy-miny)/5)]) # create the heatmap
+heatmap, xedges, yedges = np.histogram2d(arr[:,1], arr[:,2], bins = [int((maxx-minx)/10), int((maxy-miny)/10)]) # create the heatmap # to increase resolution divide by a lower number
 extent = [xedges[0], xedges[-1], yedges[0], yedges[-1]] # calculate heatmap extent
-heatmap = np.ma.masked_where(heatmap == 0, heatmap, copy=False) # choos lower bound values (currently shows anything with value > 0) for visualization
-#background = np.ma.masked_where(background == 0, background, copy=False)
-plt.imshow(heatmap.T, extent=extent, origin='lower', cmap = 'jet', alpha = 0.4) #parameters for heatmap
-plt.colorbar() # legend
+heatmap = np.ma.masked_where(heatmap < 1, heatmap, copy=False) # choose lower bound values (currently shows anything with value > 0) for visualization
+img = io.imread("./114_shafir_stav.jpg") # read the Stav Shafir img
+refPoint =[960, 540] # center point for the image
+plt.imshow(img, extent=[refPoint[0]-140, refPoint[0]+140, refPoint[1]-210, refPoint[1]+210]) # plot the image
+plt.imshow(heatmap.T, extent=extent, origin='lower', cmap = 'jet', alpha = 0.7, interpolation="bilinear") #plot the heatmap
+#plt.colorbar() # uncomment to see the legend
+#plt.axis('off) #uncomment to remove X and Y axes.
 plt.show() # show all
