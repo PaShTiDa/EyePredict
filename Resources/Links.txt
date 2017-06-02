@@ -1,0 +1,10 @@
+1. sentdex youtube channel
+https://www.youtube.com/user/sentdex/playlists
+Has relevant tutorials on all python subjects we need:
+PyQt, Machine learning, Panda, MatPlotLib, and many more.
+
+2. Python programming tutorials
+https://pythonprogramming.net/
+use the search bar to find your tutorial.
+sentdex's tutorials are here too: 
+its organized by chapters, video first and code & text explanations follows.
