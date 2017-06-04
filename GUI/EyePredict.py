@@ -6,13 +6,21 @@
 #
 # WARNING! All changes made in this file will be lost!
 
+import temp_rc
 from PyQt5 import QtCore, QtGui, QtWidgets
-
-from GUI.GuiLogic import GuiLogic
+from GUI.GuiLogic import Logic
 
 
 class Ui_MainWindow(object):
-    def setupUi(self, MainWindow):
+
+     def connect(self):
+        self.BrowseButton.clicked.connect(self.logic.browse_directory)
+        self.ReloadButton.clicked.connect(self.logic.browse_directory)
+        self.LoadButton.clicked.connect(self.logic.browse_txt_file)
+        self.SaveButton.clicked.connect(self.logic.save_file)
+
+     def setupUi(self, MainWindow):
+        self.logic = Logic()
         MainWindow.setObjectName("MainWindow")
         MainWindow.resize(1450, 1052)
         MainWindow.setStyleSheet("background-color: white")
@@ -52,8 +60,6 @@ class Ui_MainWindow(object):
         self.TobeginText.setFrameShadow(QtWidgets.QFrame.Plain)
         self.TobeginText.setObjectName("TobeginText")
         self.BrowseButton = QtWidgets.QPushButton(self.widget)
-        self.logic = GuiLogic(8)
-        self.BrowseButton.clicked.connect(self.logic.Browse_Button_clicked)
         self.BrowseButton.setEnabled(True)
         self.BrowseButton.setGeometry(QtCore.QRect(300, 741, 311, 111))
         self.BrowseButton.setStyleSheet("font: -35 12pt \"Tahoma\";\n"
@@ -387,8 +393,9 @@ class Ui_MainWindow(object):
         self.retranslateUi(MainWindow)
         self.tabWidget.setCurrentIndex(0)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
+        self.connect()
 
-    def retranslateUi(self, MainWindow):
+     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
         MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
         self.TobeginText.setText(_translate("MainWindow", "To begin, set your database."))
@@ -444,12 +451,7 @@ class Ui_MainWindow(object):
         self.actionOpen.setText(_translate("MainWindow", "Open"))
         self.actionExit.setText(_translate("MainWindow", "Exit"))
 
-    def Browse_Button_clicked(self):
-        #path = QtWidgets.QFileDialog.getExistingDirectory(self, 'open directory', '', '')
-        fname = QtWidgets.QFileDialog.getOpenFileName(self, 'Open file', 'c:\\', "Image files (*.jpg *.gif)")
-        print("BROWSE CLICKED!")
 
-import temp_rc
 
 if __name__ == "__main__":
     import sys

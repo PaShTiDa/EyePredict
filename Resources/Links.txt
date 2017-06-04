@@ -8,3 +8,16 @@ https://pythonprogramming.net/
 use the search bar to find your tutorial.
 sentdex's tutorials are here too: 
 its organized by chapters, video first and code & text explanations follows.
+
+3. matplotlib - Trace Of Saccades
+https://nickcharlton.net/posts/drawing-animating-shapes-matplotlib.html
+http://jakevdp.github.io/blog/2012/08/18/matplotlib-animation-tutorial/
+
+4. Face Feature Extraction
+http://www.codesofinterest.com/2017/04/extracting-individual-facial-features-dlib.html
+http://dlib.net/face_landmark_detection.py.html
+אפשר להשתמש בחבילה של FEATURE EXTRACTION מפרצופים, למשל פה, עיניים, גבות, אף וכו' ואז להפוך אותם לפיצ'רים שלנו מבחינת כמה כל נבדק הסתכל עליהם.
+ואז אפשר למשל לבדוק את הקשרים בין זמן ההסתכלות על הפיצ'רים השונים של הפנים והעדפה.
+יש כאן קישור לאיך החבילה הזאת עובדת, ויש גם קוד לדוגמא, זה ממש ממש פשוט!
+צריך להתקין ספריה שקוראים לה DLIB, דרך אנקונדה אפשר לעשות את זה ממש בצ'יק. ולהוריד את ה CLASSIFIER שמבצע את הזיהוי של הפנים.
+
