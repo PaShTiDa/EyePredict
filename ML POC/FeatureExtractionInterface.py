@@ -3,5 +3,5 @@ from abc import ABCMeta, abstractmethod
 class IExtraction(metaclass=ABCMeta):
 
     @abstractmethod
-    def extractFeatures(self, imgPath):
+    def extractFeatures(self, imgPath, xOrigin, yOrigin):
         return
