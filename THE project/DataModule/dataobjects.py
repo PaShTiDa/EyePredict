@@ -1,17 +1,19 @@
 import pickle
 import pandas as pd
+from skimage import io
+
 class Subject(object):
 
     def __init__(self, ID, behavioralDataPath, eyeTrackingDataPath):
         self.trials = []
         self.ID = str(ID)
         self.__getBehavioralData(behavioralDataPath)
-        self.__getTrialsFromFile(eyeTrackingDataPath)
+        self.__loadTrialsFromMemory(eyeTrackingDataPath)
 
     def __repr__(self):
         return "Subject ID: " + str(self.ID) + " has " + str(len(self.trials)) + " trials"
 
-    def __getTrialsFromFile(self, filePath):
+    def __loadTrialsFromMemory(self, filePath):
         with open(filePath, 'rb') as file:
             allTrials = pickle.load(file)
             for i in range(len(allTrials)):
@@ -37,4 +39,16 @@ class Stimulus(object):
         self.path = path
         self.xOrigin = xOrigin
         self.yOrigin = yOrigin
+        self.size = self.__calculateSize()
+        self.extent = self.__calculateStimExtent()
+
+    def __calculateSize(self):
+        img = io.imread(self.path)
+        shape = img.shape
+        return (shape[1], shape[0])
+
+    def __calculateStimExtent(self):
+        xSize = self.size[0]
+        ySize = self.size[1]
+        return [[self.xOrigin-xSize//2, self.xOrigin+xSize//2], [self.yOrigin-ySize//2, self.yOrigin+ySize//2]]
 
