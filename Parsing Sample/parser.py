@@ -1,12 +1,12 @@
 import matplotlib.pyplot as plt
 import numpy as np
 
-from IParser import ParserInterface
+from iparser import IParser
 from dataobjects import *
 from eyetrackerevents import *
 
 
-class Parser(ParserInterface):
+class Parser(IParser):
     def __init__(self):
         self.file = None
         self.startState = {"SFIX" : 1, "SSACC": 2, "SBLINK": 3}

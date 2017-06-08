@@ -1,6 +1,6 @@
 from abc import ABCMeta, abstractmethod
 
-class ParserInterface(metaclass=ABCMeta):
+class IParser(metaclass=ABCMeta):
 
     @abstractmethod
     def parse(self, file):
