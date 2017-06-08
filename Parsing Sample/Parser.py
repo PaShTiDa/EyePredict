@@ -1,10 +1,10 @@
-from IParser import ParserInterface
-import numpy as np
-import pickle
 import matplotlib.pyplot as plt
-from skimage import io
-from Data_Objects import *
-from EyeTracker_Events import *
+import numpy as np
+
+from IParser import ParserInterface
+from dataobjects import *
+from eyetrackerevents import *
+
 
 class Parser(ParserInterface):
     def __init__(self):
