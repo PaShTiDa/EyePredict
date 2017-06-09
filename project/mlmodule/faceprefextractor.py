@@ -2,10 +2,10 @@ import dlib
 import pickle
 import numpy as np
 from skimage import io
-from FeatureExtractionInterface import IExtraction
+from iextraction import IExtraction
 import matplotlib.pyplot as plt
 
-class FaceExctractor(IExtraction):
+class FacePrefExctractor(IExtraction):
 
     def __init__(self, predictorFilePath):
         self.shape_predictor_path = predictorFilePath
