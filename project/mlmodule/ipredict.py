@@ -1,6 +1,6 @@
 from abc import abstractmethod, ABCMeta
 
-class IPredictor(metaclass=ABCMeta):
+class IPredict(metaclass=ABCMeta):
 
     @abstractmethod
     def train_classifier(self, X, y):

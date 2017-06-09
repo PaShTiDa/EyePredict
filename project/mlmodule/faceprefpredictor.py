@@ -1,7 +1,7 @@
-from PredictionInterface import IPredictor
+from ipredict import IPredict
 from sklearn import svm
 
-class FacePredictor(IPredictor):
+class FacePrefPredictor(IPredict):
 
     def __init__(self):
         self.classifier = svm.SVC()
