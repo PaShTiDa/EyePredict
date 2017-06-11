@@ -3,10 +3,10 @@ import numpy as np
 
 from dataobjects import *
 from eyetrackerevents import *
-from iparser import IParser
+from parsing.ieyeparser import IEyeParser
 
 
-class Parser(IParser):
+class EyeParser(IEyeParser):
     def __init__(self):
         self.file = None
         self.startState = {"SFIX" : 1, "SSACC": 2, "SBLINK": 3}
@@ -28,6 +28,7 @@ class Parser(IParser):
             pickle.dump(self.allTrials, file, pickle.HIGHEST_PROTOCOL) # save the numpy arrays in order using the pickle module.
         print("Successfully read " + str(self.trialNum) + " trials")
         self.file.close()
+        return self.allTrials
 
     def __readUntilFlag(self, flag):
         '''This function gets a string and reads the currently parsed file until the line in which this string appears'''
@@ -129,30 +130,3 @@ class Parser(IParser):
         trialNum = int(flagData[4][5:])
         time = float(flagData[5][4:])
         return (event, task, run, trialNum, time)
-
-p = Parser() #initiate the parser object
-p.parse("./test.asc") # call parse on the current asc file
-s1 = Subject("Test", "./behavioralData.txt","./all_trials.pkl") # get subject data from the parsed file
-trial1 = s1.trials[2] # get the third trial, which is the Stav Shafir example trial
-arr = trial1.data # get the actuall data for this trial
-plt.xlim([0, 1920]) # set X axis limits
-plt.ylim([0, 1080]) # set Y axis limits
-minx = min(arr[:, 1])
-maxx = max(arr[:, 1])
-miny = min(arr[:, 2])
-maxy = max(arr[:, 2])
-heatmap, xedges, yedges = np.histogram2d(arr[:,1], arr[:,2], bins = [280//10, 420//10], range=[[820, 1100], [330, 750]]) # create the heatmap # to increase resolution divide by a lower number
-extent = [xedges[0], xedges[-1], yedges[0], yedges[-1]] # calculate heatmap extent
-#print(extent)
-#print(heatmap.T)
-#print(heatmap.shape)
-with open("./heatmap.pkl", 'wb') as file:
-    pickle.dump(heatmap, file, pickle.HIGHEST_PROTOCOL)  # save the numpy arrays in order using the pickle module.
-heatmap = np.ma.masked_where(heatmap < 1, heatmap, copy=False) # choose lower bound values (currently shows anything with value > 0) for visualization
-img = io.imread("./114_shafir_stav.jpg") # read the Stav Shafir img
-refPoint =[960, 540] # center point for the image
-plt.imshow(img, extent=[refPoint[0]-140, refPoint[0]+140, refPoint[1]-210, refPoint[1]+210]) # plot the image
-plt.imshow(heatmap.T, extent=extent, origin='lower', cmap = 'jet', alpha = 0.7) #plot the heatmap
-#plt.colorbar() # uncomment to see the legend
-#plt.axis('off) #uncomment to remove X and Y axes.
-plt.show() # show all

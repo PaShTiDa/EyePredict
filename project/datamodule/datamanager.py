@@ -5,8 +5,8 @@ stimuli = []
 screenResolution = None
 stimuliPath = ""
 eyeTrackerDataPath = ""
-eyeTrackerData = set()
-behavioralData = set()
+eyeTrackerDataFiles = []
+behavioralDataFiles = []
 behavioralDataPath = ""
 
 
@@ -56,14 +56,12 @@ def verifyData():
     (do we need to test the files aren't empty?)
     :return: bool True/False
     """
-    global eyeTrackerData, behavioralData
-    ascFiles = [f[:-4] for f in os.listdir(eyeTrackerDataPath) if os.path.isfile(os.path.join(eyeTrackerDataPath, f)) and f.endswith(".asc")]
-    eyeTrackerData = set(ascFiles)
-    txtFiles = [f[:-4] for f in os.listdir(eyeTrackerDataPath) if os.path.isfile(os.path.join(eyeTrackerDataPath, f)) and f.endswith(".txt")]
-    print(txtFiles)
-    print(ascFiles)
-    behavioralData = set(txtFiles)
-    if eyeTrackerData == behavioralData:
+    global eyeTrackerDataFiles, behavioralDataFiles
+    eyeTrackerDataFiles = [f[:-4] for f in os.listdir(eyeTrackerDataPath) if os.path.isfile(os.path.join(eyeTrackerDataPath, f)) and f.endswith(".edf")]
+    behavioralDataFiles = [f[:-4] for f in os.listdir(eyeTrackerDataPath) if os.path.isfile(os.path.join(eyeTrackerDataPath, f)) and f.endswith(".txt")]
+    eyeTrackerDataFiles = set(eyeTrackerDataFiles)
+    behavioralDataFiles = set(behavioralDataFiles)
+    if eyeTrackerDataFiles == behavioralDataFiles:
         return True
     else:
         return False

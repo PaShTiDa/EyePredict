@@ -4,11 +4,11 @@ from skimage import io
 
 class Subject(object):
 
-    def __init__(self, ID, behavioralDataPath, eyeTrackingDataPath):
+    def __init__(self, ID, behavioralData, eyeTrackingData=None):
         self.trials = []
         self.ID = str(ID)
-        self.__getBehavioralData(behavioralDataPath)
-        self.__loadTrialsFromMemory(eyeTrackingDataPath)
+        self.behavioralData = behavioralData
+        self.eyeTrackingData = eyeTrackingData
 
     def __repr__(self):
         return "Subject ID: " + str(self.ID) + " has " + str(len(self.trials)) + " trials"
@@ -18,9 +18,6 @@ class Subject(object):
             allTrials = pickle.load(file)
             for i in range(len(allTrials)):
                 self.trials.append(Trial(self, i+1, allTrials[i]))
-
-    def __getBehavioralData(self, behavioralDataPath):
-        self.behavioralData = pd.read_csv(behavioralDataPath, delim_whitespace=True, index_col=False)
 
 class Trial(object):
 
