@@ -1,4 +1,3 @@
-
 class DataHandler:
     """
     Object. contains a combined data structure for 2 object types:

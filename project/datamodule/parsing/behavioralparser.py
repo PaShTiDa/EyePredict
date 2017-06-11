@@ -50,3 +50,4 @@ class BehaviorlParser(IBehavioralParser):
 
         self.filtered_data = self.raw_data.query(query)
         return self.filtered_data
+
