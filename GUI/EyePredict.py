@@ -5,8 +5,9 @@
 # Created by: PyQt5 UI code generator 5.6
 #
 # WARNING! All changes made in this file will be lost!
+# WARNING! All changes made in this file will be lost!
 
-import temp_rc
+import images_rc
 from PyQt5 import QtCore, QtGui, QtWidgets
 from GUI.GuiLogic import Logic
 
@@ -16,11 +17,12 @@ class Ui_MainWindow(object):
      def connect(self):
         self.BrowseButton.clicked.connect(self.logic.browse_directory)
         self.ReloadButton.clicked.connect(self.logic.browse_directory)
+        self.FilterButton.clicked.connect(self.logic.FilterData)
         self.LoadButton.clicked.connect(self.logic.browse_txt_file)
         self.SaveButton.clicked.connect(self.logic.save_file)
 
      def setupUi(self, MainWindow):
-        self.logic = Logic()
+        self.logic = Logic(self)
         MainWindow.setObjectName("MainWindow")
         MainWindow.resize(1450, 1052)
         MainWindow.setStyleSheet("background-color: white")
@@ -185,6 +187,9 @@ class Ui_MainWindow(object):
         self.CurrentConfigurationLable.setStyleSheet("font: -10 11pt \"Tahoma\";")
         self.CurrentConfigurationLable.setObjectName("CurrentConfigurationLable")
         self.horizontalLayout_5.addWidget(self.CurrentConfigurationLable)
+        self.FilterButton = QtWidgets.QPushButton(self.DataTab)
+        self.FilterButton.setObjectName("FilterButton")
+        self.horizontalLayout_5.addWidget(self.FilterButton)
         self.LoadButton = QtWidgets.QPushButton(self.DataTab)
         self.LoadButton.setObjectName("LoadButton")
         self.horizontalLayout_5.addWidget(self.LoadButton)
@@ -422,6 +427,7 @@ class Ui_MainWindow(object):
         item.setText(_translate("MainWindow", "...."))
         self.DataTable.setSortingEnabled(__sortingEnabled)
         self.CurrentConfigurationLable.setText(_translate("MainWindow", "Current Configuration"))
+        self.FilterButton.setText(_translate("MainWindow", "Filter"))
         self.LoadButton.setText(_translate("MainWindow", "Load..."))
         self.SaveButton.setText(_translate("MainWindow", "Save"))
         self.ConfigurationTextEdit.setHtml(_translate("MainWindow", "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
@@ -451,7 +457,7 @@ class Ui_MainWindow(object):
         self.actionOpen.setText(_translate("MainWindow", "Open"))
         self.actionExit.setText(_translate("MainWindow", "Exit"))
 
-
+import time
 
 if __name__ == "__main__":
     import sys
