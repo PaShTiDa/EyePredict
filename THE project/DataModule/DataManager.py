@@ -3,6 +3,10 @@
 class DataManager:
     _mainDirectoryPath = ""
 
+    def __init__(self, gui_logic):
+        self.gui_logic = gui_logic()
+
+
     def VerifyPath(self):
         """
         verifys the path is valid, and contains 3 directories: 
@@ -19,6 +23,7 @@ class DataManager:
         (do we need to test the files aren't empty?)
         :return: bool True/False
         """
+        raise NotImplementedError
 
     def BrowseDirectory(self, path):
         """
@@ -49,6 +54,7 @@ class DataManager:
         :param errorString: the error to prompt
         :return: non
         """
+        raise NotImplementedError
 
 
 
